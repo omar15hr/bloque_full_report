@@ -25,3 +25,17 @@
 $string['pluginname'] = 'Full Reports';
 $string['welcome_message'] = 'Bienvenido a la herramienta de informes.';
 $string['error_message'] = 'Se ha producido un error. Intente nuevamente.';
+$string['id'] = 'ID';
+$string['username'] = 'RUT';
+$string['nombre'] = 'Nombre'; 
+$string['email'] = 'Correo Electrónico';
+$string['cursos'] = 'Cursos';
+$string['lastaccess'] = 'Último acceso';
+$string['nota'] = 'Nota';
+$string['download'] = 'Descargar';
+$string['certificado'] = 'Certificado';
+$string['select_course'] = 'Seleccionar Curso';
+$string['select_month'] = 'Seleccionar Ejecución';
+$string['all_courses'] = 'Todos los cursos';
+$string['filter'] = 'Filtrar';
+
