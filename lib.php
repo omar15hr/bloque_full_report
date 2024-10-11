@@ -1,54 +1,60 @@
 <?php
 
+function obtener_usuarios() {
+  global $DB;
+
+  // Establecer el rango de fechas
+  $start_date = mktime(0, 0, 0, $month, 1, $year); // Primer día del mes
+  $end_date = mktime(0, 0, 0, $month + 1, 1, $year) - 1; // Último día del mes
+
+  // Consulta para obtener Id, RUT, Nombres, Apellido y Correo de los usuarios
+  $sql = "SELECT u.id, 
+                   u.username AS rut, 
+                   u.firstname AS nombres, 
+                   u.lastname AS apellido, 
+                   u.email,
+                   MAX(ula.timeaccess) AS acceso
+            FROM {user} u
+            LEFT JOIN {user_lastaccess} ula ON u.id = ula.userid
+            GROUP BY u.id, u.username, u.firstname, u.lastname, u.email
+            ORDER BY u.lastname, u.firstname";
+
+  $usuarios = $DB->get_records_sql($sql);
+
+  return $usuarios;
+}
+
 // Función para generar la tabla
 function generar_primera_tabla($data) {
-    $tableattributes = ['class' => 'generaltable', 'style' => 'width: 100%; text-align: center; margin-top: 20px;'];
+  // Crear tabla
+  $table = new html_table();
+  $table->head = ['Id', 'RUT', 'Nombres', 'Apellido', 'Correo', 'Último Acceso'];
 
-    $header = html_writer::start_tag('thead');
-    $header .= html_writer::start_tag('tr');
-    $header .= html_writer::tag('th', 'Id', ['class' => 'header']);
-    $header .= html_writer::tag('th', 'RUT', ['class' => 'header']);
-    $header .= html_writer::tag('th', 'Nombres', ['class' => 'header']);
-    $header .= html_writer::tag('th', 'App', ['class' => 'header']);
-    $header .= html_writer::tag('th', 'Apm', ['class' => 'header']);
-    $header .= html_writer::tag('th', 'E-mail', ['class' => 'header']);
-    $header .= html_writer::tag('th', 'Servicio', ['class' => 'header']);
-    $header .= html_writer::tag('th', 'Dependencia', ['class' => 'header']);
-    $header .= html_writer::tag('th', 'Curso', ['class' => 'header']);
-    $header .= html_writer::tag('th', 'Establecimiento', ['class' => 'header']);
-    $header .= html_writer::tag('th', 'Ley', ['class' => 'header']);
-    $header .= html_writer::tag('th', 'Area Trabajo', ['class' => 'header']);
-    $header .= html_writer::tag('th', 'Cargo', ['class' => 'header']);
-    $header .= html_writer::tag('th', 'Último Acceso', ['class' => 'header']);
-    $header .= html_writer::tag('th', 'Estado', ['class' => 'header']);
-    $header .= html_writer::tag('th', 'Nota', ['class' => 'header']);
-    $header .= html_writer::end_tag('tr');
-    $header .= html_writer::end_tag('thead');
+  /// Agregar datos de la consulta a la tabla
+  foreach ($data as $usuario) {
+    $row = new html_table_row();
+    $row->cells = [
+        $usuario->id,
+        $usuario->rut,
+        $usuario->nombres,
+        $usuario->apellido,
+        $usuario->email,
+        $usuario->acceso ? userdate($usuario->acceso) : 'Nunca'
+    ];
+    $table->data[] = $row;
+  }
 
-    $body = html_writer::start_tag('tbody');
-    foreach ($data as $fila) {
-        $body .= html_writer::start_tag('tr');
-        foreach ($fila as $celda) {
-            $body .= html_writer::tag('td', $celda);
-        }
-        $body .= html_writer::end_tag('tr');
-    }
-    $body .= html_writer::end_tag('tbody');
+  // Renderizar la tabla
+  $table_html = html_writer::table($table);
 
-    $table = html_writer::start_tag('table', $tableattributes);
-    $table .= $header;
-    $table .= $body;
-    $table .= html_writer::end_tag('table');
+  // Estilos para el contenedor de la tabla
+  $scroll_div = html_writer::start_div('table-container', ['style' => 'overflow: auto; max-height: 400px; border: 1px solid #ddd;']);
+  $scroll_div .= $table_html;
+  $scroll_div .= html_writer::end_div();
 
-    /// Crear un div contenedor para el scrollbar horizontal y vertical
-    $scrollDiv = html_writer::start_div('table-container', [
-      'style' => 'overflow-x: auto; overflow-y: auto; max-height: 400px;'
-  ]);
-  $scrollDiv .= $table;
-  $scrollDiv .= html_writer::end_div();
-
-  return $scrollDiv;
+  return $scroll_div;
 }
+
 
 function crear_primer_div($years, $months) {
   // Atributos del div
@@ -73,6 +79,33 @@ function crear_primer_div($years, $months) {
   return $div;
 }
 
+function obtener_cursos() {
+  global $DB;
+
+  // Consulta para obtener ID del curso, nombre del curso y el número de matriculados
+  $sql = "SELECT 
+              c.id AS courseid,
+              c.fullname AS course_name,
+              c.startdate AS start_date,
+              COUNT(ue.userid) AS enrolled_count
+          FROM 
+              mdl_course c
+          LEFT JOIN 
+              mdl_enrol e ON e.courseid = c.id
+          LEFT JOIN 
+              mdl_user_enrolments ue ON ue.enrolid = e.id
+          GROUP BY 
+              c.id, c.fullname, c.startdate
+          ORDER BY 
+              c.fullname;
+          ";
+
+  $cursos = $DB->get_records_sql($sql);
+
+  return $cursos;
+}
+
+
 function crear_segundo_div($years, $months) {
   // Atributos del div
   $divattributes = ['style' => 'text-align: center; background-color: #f2f2f2; padding: 20px;'];
@@ -94,45 +127,29 @@ function crear_segundo_div($years, $months) {
 }
 
 function generar_segunda_tabla($data) {
-  $tableattributes = ['class' => 'generaltable', 'style' => 'width: 100%; text-align: center; margin-top: 20px;'];
+  // Crear tabla
+  $table = new html_table();
+  $table->head = ['Id', 'Cursos', 'Ejecución', 'Matriculados'];
 
-  // Crear los encabezados de la tabla
-  $header = html_writer::start_tag('thead');
-  $header .= html_writer::start_tag('tr');
-  $header .= html_writer::tag('th', '#', ['class' => 'header']);
-  $header .= html_writer::tag('th', 'Cursos', ['class' => 'header']);
-  $header .= html_writer::tag('th', 'Ejecución', ['class' => 'header']);
-  $header .= html_writer::tag('th', 'Matriculados', ['class' => 'header']);
-  $header .= html_writer::tag('th', 'Aprobados', ['class' => 'header']);
-  $header .= html_writer::tag('th', 'Reprobados', ['class' => 'header']);
-  $header .= html_writer::tag('th', 'Sin Acceso', ['class' => 'header']);
-  $header .= html_writer::tag('th', 'Abandonos', ['class' => 'header']);
-  $header .= html_writer::end_tag('tr');
-  $header .= html_writer::end_tag('thead');
-
-  // Crear el cuerpo de la tabla con los datos proporcionados
-  $body = html_writer::start_tag('tbody');
-  foreach ($data as $fila) {
-      $body .= html_writer::start_tag('tr');
-      foreach ($fila as $celda) {
-          $body .= html_writer::tag('td', $celda);
-      }
-      $body .= html_writer::end_tag('tr');
+  /// Agregar datos de la consulta a la tabla
+  foreach ($data as $curso) {
+    $row = new html_table_row();
+    $row->cells = [
+        $curso->courseid,
+        $curso->course_name,
+        userdate($curso->start_date),
+        $curso->enrolled_count
+    ];
+    $table->data[] = $row;
   }
-  $body .= html_writer::end_tag('tbody');
 
-  // Generar la tabla
-  $table = html_writer::start_tag('table', $tableattributes);
-  $table .= $header;
-  $table .= $body;
-  $table .= html_writer::end_tag('table');
+  // Renderizar la tabla
+  $table_html = html_writer::table($table);
 
-  // Crear un div contenedor para el scrollbar horizontal y vertical
-  $scrollDiv = html_writer::start_div('table-container', [
-      'style' => 'overflow-x: auto; overflow-y: auto; max-height: 400px;'
-  ]);
-  $scrollDiv .= $table;
-  $scrollDiv .= html_writer::end_div();
+  // Estilos para el contenedor de la tabla
+  $scroll_div = html_writer::start_div('table-container', ['style' => 'overflow: auto; max-height: 400px; border: 1px solid #ddd;']);
+  $scroll_div .= $table_html;
+  $scroll_div .= html_writer::end_div();
 
-  return $scrollDiv;
+  return $scroll_div;
 }
