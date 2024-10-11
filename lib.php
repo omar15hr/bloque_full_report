@@ -3,10 +3,6 @@
 function obtener_usuarios() {
   global $DB;
 
-  // Establecer el rango de fechas
-  $start_date = mktime(0, 0, 0, $month, 1, $year); // Primer día del mes
-  $end_date = mktime(0, 0, 0, $month + 1, 1, $year) - 1; // Último día del mes
-
   // Consulta para obtener Id, RUT, Nombres, Apellido y Correo de los usuarios
   $sql = "SELECT u.id, 
                    u.username AS rut, 
