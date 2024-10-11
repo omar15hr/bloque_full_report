@@ -18,16 +18,14 @@ require_once(__DIR__ . '/lib.php');
         }
 
         $this->content = new stdClass();
+        $this->page->requires->js(new moodle_url('/blocks/full_report/scripts.js'));
 
-        // PRIMER LABEL
-        $this->content->text .= html_writer::tag('h3', 'Resultados por Usuarios Inscritos', ['style' => 'text-align: center;']);
-        
         // Datos para los selects
         $years = [];
         for ($year = 2020; $year <= 2025; $year++) {
             $years[$year] = $year;
         }
-
+        
         $months = [
             '01' => 'Enero',
             '02' => 'Febrero',
@@ -42,18 +40,22 @@ require_once(__DIR__ . '/lib.php');
             '11' => 'Noviembre',
             '12' => 'Diciembre',
         ];
-
+        
         $data = obtener_usuarios();
-        $this->content->text .= crear_primer_div($years, $months) . generar_primera_tabla($data);
-
-
         $data2 = obtener_cursos();
 
+        // PRIMER LABEL
+        $this->content->text .= html_writer::tag('h3', 'Resultados por Usuarios Inscritos', ['style' => 'text-align: center;']);
+
+        
+        // Crear el PRIMER div
+        $this->content->text .= crear_primer_div($years, $months) . generar_primera_tabla($data);
+        
         // SEGUNDO LABEL
         $this->content->text .= html_writer::tag('h3', 'Resultados Totales Cursos por Ejecución', ['style' => 'text-align: center; margin-top: 10px;']);
 
         // Crear el SEGUNDO div
-        $this->content->text .= crear_segundo_div($years, $months). generar_segunda_tabla($data2);
+        $this->content->text .= crear_segundo_div($years, $months) . generar_segunda_tabla($data2);
         
 
         return $this->content;
