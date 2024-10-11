@@ -136,4 +136,3 @@ function create_courses_table($DB, $selected_month) {
     $table .= '</tbody></table>';
     return $table;
 }
-

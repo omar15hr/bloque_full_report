@@ -40,4 +40,5 @@ $string['all_courses'] = 'Todos los cursos';
 $string['filter'] = 'Filtrar';
 $string['select_month_2'] = 'Seleccionar Ejecución';
 $string['fullname'] = 'Curso';
+$string['select_option'] = 'Resultados Cursos';
 
