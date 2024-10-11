@@ -38,4 +38,6 @@ $string['select_course'] = 'Seleccionar Curso';
 $string['select_month'] = 'Seleccionar Ejecución';
 $string['all_courses'] = 'Todos los cursos';
 $string['filter'] = 'Filtrar';
+$string['select_month_2'] = 'Seleccionar Ejecución';
+$string['fullname'] = 'Curso';
 
