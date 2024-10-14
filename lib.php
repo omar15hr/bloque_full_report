@@ -79,6 +79,8 @@ function generar_primera_tabla($data) {
 
 
 function crear_primer_div($years, $months) {
+  global $DB;
+
   // Atributos del div
   $divattributes = ['style' => 'text-align: center; background-color: #f2f2f2; padding: 20px;'];
 
@@ -93,16 +95,23 @@ function crear_primer_div($years, $months) {
   $select2attributes = ['style' => 'margin-right: 5px;', 'id' => 'monthSelect'];
   $div .= html_writer::select($months, 'monthSelect', null, 'Seleccione el mes', $select2attributes);
 
+  // Obtener la lista de cursos y formatear opciones para el select
+  $cursos = obtener_cursos();
+  $courseOptions = [];
+  foreach ($cursos as $curso) {
+      $courseOptions[$curso->courseid] = $curso->course_name; // Asocia el ID del curso con su nombre
+  }
+
   // Crear el select de cursos
   $select3attributes = ['id' => 'courseSelect'];
-  $div .= html_writer::select([],'courseSelect', null, 'Seleccione el curso', $select3attributes);
-
+  $div .= html_writer::select($courseOptions, 'courseSelect', null, 'Seleccione el curso', $select3attributes);
 
   // Cerrar el div
   $div .= html_writer::end_div();
 
   return $div;
 }
+
 
 
 function crear_segundo_div($years, $months) {
