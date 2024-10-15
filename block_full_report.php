@@ -47,12 +47,14 @@ require_once(__DIR__ . '/lib.php');
         $this->content->text .= '<select id="select-cursos">';
         $this->content->text .= '<option value="">Selecciona un curso</option>';
         $this->content->text .= '</select>';
+
+
+
         
 
         // Incluimos el script JS
         $PAGE->requires->js('/blocks/full_report/scripts.js');
         
-
         return $this->content;
     }
 

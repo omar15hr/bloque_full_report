@@ -9,6 +9,7 @@ if (!isloggedin() || isguestuser()) {
 
 $mes = required_param('mes', PARAM_INT);   // El mes es un número (01 a 12)
 $year = required_param('year', PARAM_INT); // El año es un número (ej. 2024)
+$cursoId = optional_param('cursoId', null, PARAM_INT);
 
 // Aseguramos que la sesskey es válida para la solicitud
 require_sesskey();
@@ -28,7 +29,7 @@ foreach ($cursos as $curso) {
     $result[] = [
         'id' => $curso->id,
         'fullname' => $curso->fullname,
-        'startdate' => date('d/m/Y', $curso->startdate),  // Formato legible de la fecha de inicio
+        'startdate' => date('d-m-y', $curso->startdate),  // Formato legible de la fecha de inicio
     ];
 }
 

@@ -6,6 +6,14 @@ document.addEventListener('DOMContentLoaded', function() {
   selectMes.addEventListener('change', cargarCursos);
   selectYear.addEventListener('change', cargarCursos);
 
+
+  // Asegúrate de que este código se encuentre dentro de la función `DOMContentLoaded`
+  selectCursos.addEventListener('change', function() {
+    var cursoSeleccionado = selectCursos.value; // Obtener el valor del curso seleccionado
+    
+  });
+
+
   function cargarCursos() {
       var mesSeleccionado = selectMes.value;
       var yearSeleccionado = selectYear.value;
@@ -34,4 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
           selectCursos.innerHTML = '<option value="">Selecciona un curso</option>';
       }
   }
+
 });
+
+
