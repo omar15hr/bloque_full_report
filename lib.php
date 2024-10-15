@@ -88,11 +88,11 @@ function crear_primer_div($years, $months) {
   $div = html_writer::start_div('', $divattributes);
 
   // Crear el select de años
-  $select1attributes = ['style' => 'margin-right: 5px;', 'id' => 'yearSelect'];
+  $select1attributes = ['style' => 'margin-right: 5px;', 'id' => 'yearSelect', 'onchange' => 'actualizarCursos()'];
   $div .= html_writer::select($years, 'yearSelect', null, 'Seleccione el año', $select1attributes);
 
   // Crear el select de meses
-  $select2attributes = ['style' => 'margin-right: 5px;', 'id' => 'monthSelect'];
+  $select2attributes = ['style' => 'margin-right: 5px;', 'id' => 'monthSelect', 'onchange' => 'actualizarCursos()'];
   $div .= html_writer::select($months, 'monthSelect', null, 'Seleccione el mes', $select2attributes);
 
   // Obtener la lista de cursos y formatear opciones para el select
