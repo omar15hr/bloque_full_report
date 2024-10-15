@@ -10,31 +10,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Si se solicita el ID de un curso, manejamos esa solicitud
     if (!empty($courseId)) {
-        // Consulta SQL para obtener la información del curso
-        $sql = "SELECT c.fullname, c.startdate, 
-                       (SELECT COUNT(*) FROM {user_enrolments} ue 
-                        JOIN {enrol} e ON ue.enrolid = e.id 
-                        WHERE e.courseid = c.id) AS enrolled_count 
-                FROM {course} c 
-                WHERE c.id = :courseid";
+        // Consulta SQL para obtener la información de los usuarios inscritos en el curso
+        $sql = "SELECT u.id, u.firstname, u.lastname
+                FROM {user} u
+                JOIN {user_enrolments} ue ON ue.userid = u.id
+                JOIN {enrol} e ON e.id = ue.enrolid
+                WHERE e.courseid = :courseid";
         
-        // Ejecutar la consulta
         $params = ['courseid' => $courseId];
-        $course = $DB->get_record_sql($sql, $params);
-    
+
+        // Obtener usuarios
+        $users = $DB->get_records_sql($sql, $params);
+
         // Formatear la respuesta
-        if ($course) {
-            $response = [
-                'course_name' => $course->fullname,
-                'startdate' => date('Y-m-d', $course->startdate),
-                'enrolled_count' => $course->enrolled_count, // Ahora obtienes el conteo directamente
-            ];
-        } else {
-            $response = [
-                'error' => 'Curso no encontrado.',
+        $response = [
+            'message' => 'Usuarios obtenidos correctamente.',
+            'users' => [] // Inicializar el array de usuarios
+        ];
+
+        foreach ($users as $user) {
+            $response['users'][] = [
+                'id' => $user->id,
+                'name' => $user->firstname,
+                'surname' => $user->lastname
             ];
         }
-    
+
         header('Content-Type: application/json');
         echo json_encode($response);
         exit;
@@ -77,3 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo json_encode($response);
     exit;
 }
+
+
+
+

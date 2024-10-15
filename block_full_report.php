@@ -12,13 +12,17 @@ class block_full_report extends block_base {
             return $this->content;
         }
 
+        // Incluir el script JS
+        $PAGE->requires->js('/blocks/full_report/scripts.js');
+
         // Definir el contenido
         $this->content = new stdClass();
 
-        $this->content->text = $OUTPUT->render_from_template('block_full_report/content', []);
+        $this->content->text .= 'Resultados por usuarios inscritos'; 
+        $this->content->text .= $OUTPUT->render_from_template('block_full_report/content', []);
 
-        // Incluir el script JS
-        $PAGE->requires->js('/blocks/full_report/scripts.js');
+        $this->content->text .= 'Resultados totales cursos por ejecución'; 
+        $this->content->text .= $OUTPUT->render_from_template('block_full_report/courses', []);
 
         return $this->content;
     }
