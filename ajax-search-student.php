@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Consulta SQL para obtener el nombre, apellido, username y cursos en los que está matriculado
     $sql = "
-        SELECT u.id, u.firstname, u.lastname, u.username, c.fullname AS course
+        SELECT u.id, u.firstname, u.lastname, u.username, c.fullname AS course, u.institution
         FROM {user} u
         JOIN {user_enrolments} ue ON ue.userid = u.id
         JOIN {enrol} e ON e.id = ue.enrolid
@@ -41,7 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'name' => $user->firstname,
             'surname' => $user->lastname,
             'username' => $user->username,
-            'course' => $user->course
+            'course' => $user->course,
+            'institution' => $user->institution
         ];
     }
 

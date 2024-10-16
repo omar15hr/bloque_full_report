@@ -21,7 +21,8 @@ document.getElementById("searchButton").addEventListener("click", function() {
                 response.users.forEach(function(user) {
                     resultHtml += "<li>Nombre: " + user.name + " " + user.surname + "<br>";
                     resultHtml += "Username: " + user.username + "<br>";
-                    resultHtml += "Curso: " + user.course + "</li>";
+                    resultHtml += "Curso: " + user.course + "<br>";
+                    resultHtml += "Institución: " + user.institution || "Sin institución" + "</li>" + "<br>";
                 });
                 resultHtml += "</ul>";
                 document.getElementById("searchResults").innerHTML = resultHtml;

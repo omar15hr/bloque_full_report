@@ -11,12 +11,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Si se solicita el ID de un curso, manejamos esa solicitud
     if (!empty($courseId)) {
         // Consulta SQL para obtener la información de los usuarios inscritos en el curso
-        $sql = "SELECT u.id, u.firstname, u.lastname
+        $sql = "SELECT u.id, u.username, u.firstname, u.lastname, c.fullname AS course_name, u.institution
                 FROM {user} u
                 JOIN {user_enrolments} ue ON ue.userid = u.id
                 JOIN {enrol} e ON e.id = ue.enrolid
-                WHERE e.courseid = :courseid";
-        
+                JOIN {course} c ON c.id = e.courseid
+                WHERE e.courseid = :courseid
+                GROUP BY u.id, u.username, u.firstname, u.lastname, c.fullname, u.institution;";
+
+
         $params = ['courseid' => $courseId];
 
         // Obtener usuarios
@@ -31,8 +34,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach ($users as $user) {
             $response['users'][] = [
                 'id' => $user->id,
+                'username' => $user->username,
                 'name' => $user->firstname,
-                'surname' => $user->lastname
+                'surname' => $user->lastname,
+                'course_name' => $user->course_name,
+                'institution' => $user->institution
             ];
         }
 
@@ -78,7 +84,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo json_encode($response);
     exit;
 }
-
-
-
-
