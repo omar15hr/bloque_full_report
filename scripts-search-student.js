@@ -22,7 +22,8 @@ document.getElementById("searchButton").addEventListener("click", function() {
                     resultHtml += "<li>Nombre: " + user.name + " " + user.surname + "<br>";
                     resultHtml += "Username: " + user.username + "<br>";
                     resultHtml += "Curso: " + user.course + "<br>";
-                    resultHtml += "Institución: " + user.institution || "Sin institución" + "</li>" + "<br>";
+                    resultHtml += "Institución: " + user.institution + "<br>";
+                    resultHtml += "Resultado del Curso: " + (user.total_grade !== undefined ? user.total_grade : "Sin calificación") + "</li>" + "<br>";
                 });
                 resultHtml += "</ul>";
                 document.getElementById("searchResults").innerHTML = resultHtml;

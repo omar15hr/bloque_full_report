@@ -14,12 +14,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Consulta SQL para obtener el nombre, apellido, username y cursos en los que está matriculado
     $sql = "
-        SELECT u.id, u.firstname, u.lastname, u.username, c.fullname AS course, u.institution
+        SELECT u.id, u.firstname, u.lastname, u.username, c.fullname AS course, u.institution,
+               ROUND(gg.finalgrade, 2) AS total_grade
         FROM {user} u
         JOIN {user_enrolments} ue ON ue.userid = u.id
         JOIN {enrol} e ON e.id = ue.enrolid
         JOIN {course} c ON c.id = e.courseid
-        WHERE u.username = :username
+        JOIN {grade_grades} gg ON gg.userid = u.id
+        JOIN {grade_items} gi ON gi.id = gg.itemid
+        WHERE u.username = :username AND gi.itemtype = 'course'
     ";
 
     $params = ['username' => $username];
@@ -42,7 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'surname' => $user->lastname,
             'username' => $user->username,
             'course' => $user->course,
-            'institution' => $user->institution
+            'institution' => $user->institution,
+            'total_grade' => $user->total_grade
         ];
     }
 

@@ -64,11 +64,17 @@ document.addEventListener("DOMContentLoaded", function() {
                     } else {
                         var responseMessage = "Curso: " + response.users[0].course_name + "<br>Usuarios inscritos:<br>";
                         response.users.forEach(function(user) {
-                            responseMessage += user.username + " - " + user.name + " " + user.surname + " - " + (user.institution || "Sin institución") + "<br>";
+                            responseMessage += user.username 
+                            + " - " + user.name 
+                            + " " + user.surname 
+                            + " - " + (user.institution || "Sin institución") 
+                            + " - " + (user.total_grade !== undefined ? user.total_grade : "Sin calificación")
+                            + "<br>";
                         });
                         document.getElementById("ajaxResponse").innerHTML = responseMessage;
                     }
                     
+
                     
                 } else {
                     document.getElementById("ajaxResponse").innerText = "Error en la solicitud: " + xhr.status;
