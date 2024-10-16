@@ -14,9 +14,14 @@ class block_full_report extends block_base {
 
         // Incluir el script JS
         $PAGE->requires->js('/blocks/full_report/scripts.js');
+        $PAGE->requires->js('/blocks/full_report/scripts-courses.js');
+        $PAGE->requires->js('/blocks/full_report/scripts-search-student.js');
 
         // Definir el contenido
         $this->content = new stdClass();
+
+        $this->content->text .= 'Buscador por rut'; 
+        $this->content->text .= $OUTPUT->render_from_template('block_full_report/search', []);
 
         $this->content->text .= 'Resultados por usuarios inscritos'; 
         $this->content->text .= $OUTPUT->render_from_template('block_full_report/content', []);

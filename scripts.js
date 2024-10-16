@@ -93,8 +93,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-
-
     // Función para actualizar la lista de cursos
     function updateCourseList() {
         var month2 = document.getElementById("monthSelect2").value;
@@ -132,6 +130,9 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("monthSelect2").addEventListener("change", updateCourseList);
     document.getElementById("yearSelect2").addEventListener("change", updateCourseList);
 });
+
+
+
 
 
 
