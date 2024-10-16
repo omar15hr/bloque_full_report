@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         WHERE u.username = :username AND gi.itemtype = 'course'
     ";
 
+
     $params = ['username' => $username];
 
     // Ejecutar la consulta

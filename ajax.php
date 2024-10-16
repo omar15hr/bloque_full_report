@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($courseId)) {
         // Consulta SQL para obtener la información de los usuarios inscritos en el curso
         $sql = "SELECT u.id, u.username, u.firstname, u.lastname, c.fullname AS course_name, u.institution,
-                   SUM(gg.finalgrade) AS total_grade
+                    COALESCE(ROUND(gg.finalgrade, 2), 'Sin calificación') AS total_grade
                 FROM {user} u
                 JOIN {user_enrolments} ue ON ue.userid = u.id
                 JOIN {enrol} e ON e.id = ue.enrolid
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'surname' => $user->lastname,
                 'course_name' => $user->course_name,
                 'institution' => $user->institution,
-                'total_grade' => $user->total_grade ? round($user->total_grade, 2) : 0
+                'total_grade' => $user->total_grade,
             ];
         }
 

@@ -68,12 +68,11 @@ document.addEventListener("DOMContentLoaded", function() {
                             + " - " + user.name 
                             + " " + user.surname 
                             + " - " + (user.institution || "Sin institución") 
-                            + " - " + (user.total_grade !== undefined ? user.total_grade : "Sin calificación")
+                            + " - " + (user.total_grade !== 'Sin calificación' ? user.total_grade : "Sin calificación")
                             + "<br>";
                         });
                         document.getElementById("ajaxResponse").innerHTML = responseMessage;
                     }
-                    
 
                     
                 } else {

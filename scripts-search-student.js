@@ -28,6 +28,7 @@ document.getElementById("searchButton").addEventListener("click", function() {
                 resultHtml += "</ul>";
                 document.getElementById("searchResults").innerHTML = resultHtml;
             }
+            
         }
     };
 
