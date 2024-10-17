@@ -12,6 +12,9 @@ class block_full_report extends block_base {
             return $this->content;
         }
 
+        // Incluir el CSS
+        $PAGE->requires->css('/blocks/full_report/styles.css');
+
         // Incluir el script JS
         $PAGE->requires->js('/blocks/full_report/scripts.js');
         $PAGE->requires->js('/blocks/full_report/scripts-courses.js');
@@ -20,13 +23,15 @@ class block_full_report extends block_base {
         // Definir el contenido
         $this->content = new stdClass();
 
-        $this->content->text .= 'Buscador por rut'; 
+        $this->content->text .= '<div class="rut-search">Buscador por RUT</div>';
         $this->content->text .= $OUTPUT->render_from_template('block_full_report/search', []);
 
-        $this->content->text .= 'Resultados por usuarios inscritos'; 
+        $this->content->text .= '<h3 class="resultados-titulo">Resultados por usuarios inscritos</h3>'; 
         $this->content->text .= $OUTPUT->render_from_template('block_full_report/content', []);
 
-        $this->content->text .= 'Resultados totales cursos por ejecución'; 
+        $this->content->text .= '<br>';
+
+        $this->content->text .= '<h3 class="resultados-titulo2">Resultados totales cursos por ejecución</h3>'; 
         $this->content->text .= $OUTPUT->render_from_template('block_full_report/courses', []);
 
         return $this->content;

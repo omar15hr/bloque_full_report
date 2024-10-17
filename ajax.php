@@ -11,16 +11,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Si se solicita el ID de un curso, manejamos esa solicitud
     if (!empty($courseId)) {
         // Consulta SQL para obtener la información de los usuarios inscritos en el curso
-        $sql = "SELECT u.id, u.username, u.firstname, u.lastname, c.fullname AS course_name, u.institution,
-                    COALESCE(ROUND(gg.finalgrade, 2), 0) AS total_grade
-                FROM {user} u
-                JOIN {user_enrolments} ue ON ue.userid = u.id
-                JOIN {enrol} e ON e.id = ue.enrolid
-                JOIN {course} c ON c.id = e.courseid
-                LEFT JOIN {grade_grades} gg ON gg.userid = u.id
-                LEFT JOIN {grade_items} gi ON gi.id = gg.itemid
-                WHERE e.courseid = :courseid
-                GROUP BY u.id, u.username, u.firstname, u.lastname, c.fullname, u.institution;";
+        $sql = "
+            SELECT u.id, u.username, u.firstname, u.lastname, u.email, c.fullname AS course_name, u.institution,
+                   COUNT(gi.id) AS total_quiz_course, 
+                   COUNT(CASE WHEN gg.finalgrade > 0 THEN 1 ELSE NULL END) AS total_quiz_user
+            FROM {user} u
+            JOIN {user_enrolments} ue ON ue.userid = u.id
+            JOIN {enrol} e ON e.id = ue.enrolid
+            JOIN {course} c ON c.id = e.courseid
+            LEFT JOIN {grade_items} gi ON gi.courseid = c.id AND gi.itemtype = 'mod' AND gi.itemmodule = 'quiz'
+            LEFT JOIN {grade_grades} gg ON gg.itemid = gi.id AND gg.userid = u.id
+            WHERE e.courseid = :courseid
+            GROUP BY u.id, u.username, u.firstname, u.lastname, u.email, c.fullname, u.institution
+        ";
 
         $params = ['courseid' => $courseId];
 
@@ -34,23 +37,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
 
         foreach ($users as $user) {
-            // Lógica para determinar el estado del usuario
-            $status = 'activo'; // Estado por defecto
+            // Calcular la diferencia entre los quiz totales y los del usuario
+            $difference = $user->total_quiz_course - $user->total_quiz_user;
 
-            if ($user->total_grade == 0) {
-                $status = 'sin acceso';
-            } elseif ($user->total_grade === 0) { // Ajustar según tus condiciones
-                $status = 'desiste';
+            // Lógica para determinar el estado del usuario
+            if ($difference == 0) {
+                $status = 'Activo';
+            } elseif ($difference == $user->total_quiz_course) {
+                $status = 'Sin acceso';
+            } elseif ($difference > 0 && $difference < $user->total_quiz_course) {
+                $status = 'Desiste';
+            } else {
+                $status = 'Sin acceso'; // Manejo por defecto
             }
 
+            // Añadir usuario a la respuesta
             $response['users'][] = [
                 'id' => $user->id,
                 'username' => $user->username,
                 'name' => $user->firstname,
                 'surname' => $user->lastname,
+                'email' => $user->email, // Añadir el email a la respuesta
                 'course_name' => $user->course_name,
                 'institution' => $user->institution,
-                'total_grade' => $user->total_grade,
                 'status' => $status // Agregar estado a la respuesta
             ];
         }
@@ -97,3 +106,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo json_encode($response);
     exit;
 }
+?>

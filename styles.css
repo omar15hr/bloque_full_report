@@ -1,0 +1,201 @@
+/* styles.css */
+
+/* BUSCADOR DE RUT */
+.form-container {
+  margin: 20px;
+}
+
+.input-field {
+  padding: 10px;
+  width: 300px; /* Ajusta según tus necesidades */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 5px;
+}
+
+.search-button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.search-button:hover {
+  background-color: #0056b3;
+}
+
+.search-button:focus {
+  background-color: #007bff;
+  color: white;
+  outline: none; 
+}
+
+.search-button:active {
+  background-color: #0056b3;
+  color: white;
+  outline: none;
+}
+
+.results-container {
+  margin-top: 20px;
+}
+
+/* TITULO DEL BUSCADOR DE RUT  */
+.rut-search {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #4a90e2;
+}
+
+
+/* DATOS RESULTADOS DEL BUSCADOR DE RUT */
+/* Estilo del contenedor de resultados */
+.search-results {
+  list-style-type: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+/* Estilo de cada elemento del resultado */
+.result-item {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+/* Estilo para el nombre */
+.result-name {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Estilo para el username */
+.result-username {
+  color: #333;
+}
+
+/* Estilo para el email */
+.result-email {
+  color: #555;
+  font-style: italic;
+}
+
+/* Estilo para el curso */
+.result-course {
+  color: #007bff;
+}
+
+/* Estilo para la institución */
+.result-institution {
+  color: #28a745;
+}
+
+/* Estilo para el estado */
+.result-status {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* TITULO DE LOS PRIMEROS SELECT POR USUARIOS */
+/* Estilo para el título de resultados */
+.resultados-titulo {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #4a90e2; /* Cambia este color según prefieras */
+  text-align: left; /* Ajusta la alineación según sea necesario */
+  border-bottom: 2px solid #ddd; /* Opcional: una línea bajo el título */
+  padding-bottom: 5px;
+}
+
+.resultados-titulo2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #4a90e2; /* Cambia este color según prefieras */
+  text-align: left; /* Ajusta la alineación según sea necesario */
+  border-bottom: 2px solid #ddd; /* Opcional: una línea bajo el título */
+  padding-bottom: 5px;
+}
+
+/* ESTILOS PARA LOS SELECT DE LOS USUARIOS INSCRITOS */
+/* Estilos para los select */
+.custom-select {
+  width: 200px; /* Ancho personalizado */
+  padding: 8px; /* Espaciado interno */
+  margin: 10px 0; /* Margen entre los selects */
+  font-size: 16px; /* Tamaño de fuente */
+  border-radius: 5px; /* Bordes redondeados */
+  border: 1px solid #ccc; /* Borde de los select */
+  background-color: #f9f9f9; /* Fondo del select */
+  color: #333; /* Color del texto */
+  transition: border-color 0.3s ease; /* Efecto de transición en el borde */
+}
+
+/* Efecto hover */
+.custom-select:hover {
+  border-color: #4a90e2; /* Color del borde cuando se pasa el mouse por encima */
+}
+
+/* Efecto focus */
+.custom-select:focus {
+  outline: none; /* Remover outline */
+  border-color: #4a90e2; /* Color del borde al hacer focus */
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* Sombra al hacer focus */
+}
+
+/* TABLA DE RESULTADOS DE ALUMNOS INSCRITOS */
+.table-container {
+  overflow-x: auto; /* Habilitar scroll horizontal */
+  overflow-y: auto; /* Habilitar scroll vertical */
+  max-width: 100%; /* Ancho máximo del contenedor */
+  max-height: 400px; /* Altura máxima para habilitar scroll vertical */
+  margin-top: 20px; /* Margen superior */
+  border: 1px solid #ddd; /* Opcional: Bordes del contenedor */
+  border-radius: 5px; /* Opcional: Bordes redondeados */
+}
+
+.user-table {
+  width: 100%; /* La tabla toma el ancho completo del contenedor */
+  border-collapse: collapse; /* Colapsar bordes */
+}
+
+/* Estilos de las celdas */
+.user-table th, .user-table td {
+  border: 1px solid #ddd; /* Bordes de las celdas */
+  padding: 8px; /* Espaciado interno */
+  text-align: left; /* Alineación a la izquierda */
+}
+
+/* Estilos de la cabecera de la tabla */
+.user-table th {
+  background-color: #f2f2f2; /* Fondo de la cabecera */
+  color: #333; /* Color del texto de la cabecera */
+}
+
+/* Estilos para filas pares */
+.user-table tr:nth-child(even) {
+  background-color: #f9f9f9; /* Color de fondo para filas pares */
+}
+
+/* Estilos para el efecto hover */
+.user-table tr:hover {
+  background-color: #f1f1f1; /* Color de fondo al pasar el mouse */
+}
+
+.title-table-course {
+  font-size: 25px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #4a90e2; /* Cambia este color según prefieras */
+  text-align: left; /* Ajusta la alineación según sea necesario */
+  border-bottom: 2px solid #ddd; /* Opcional: una línea bajo el título */
+  padding-bottom: 5px;
+  justify-content: center;
+  text-align: center;
+}

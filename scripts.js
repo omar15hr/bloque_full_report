@@ -62,20 +62,24 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (response.error) {
                         document.getElementById("ajaxResponse").innerText = response.error;
                     } else {
-                        var responseMessage = "Curso: " + response.users[0].course_name + "<br>Usuarios inscritos:<br>";
+                        // Iniciar la estructura de la tabla
+                        var responseMessage = "<h3 class='title-table-course'>Curso: " + response.users[0].course_name + "</h3>";
+                        responseMessage += "<table class='user-table'><thead><tr><th>Usuario</th><th>Nombre</th><th>Apellido</th><th>Institución</th><th>Email</th><th>Estado</th></tr></thead><tbody>";
+                    
                         response.users.forEach(function(user) {
-                            responseMessage += user.username 
-                            + " - " + user.name 
-                            + " " + user.surname 
-                            + " - " + (user.institution || "Sin institución") 
-                            + " - " + (user.total_grade !== 'Sin calificación' ? user.total_grade : "Sin calificación") 
-                            + " - " + user.status // Añadir el estado del usuario
-                            + "<br>";
+                            responseMessage += "<tr>"
+                                + "<td>" + user.username + "</td>"
+                                + "<td>" + user.name + "</td>"
+                                + "<td>" + user.surname + "</td>"
+                                + "<td>" + (user.institution || "Sin institución") + "</td>"
+                                + "<td>" + user.email + "</td>"
+                                + "<td>" + user.status + "</td>"
+                                + "</tr>";
                         });
+                    
+                        responseMessage += "</tbody></table>";
                         document.getElementById("ajaxResponse").innerHTML = responseMessage;
                     }
-                    
-
                     
                 } else {
                     document.getElementById("ajaxResponse").innerText = "Error en la solicitud: " + xhr.status;

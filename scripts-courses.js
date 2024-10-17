@@ -22,8 +22,6 @@ document.addEventListener("DOMContentLoaded", function() {
               if (xhr.status === 200) {
                   // Mostrar directamente el HTML devuelto
                   document.getElementById("ajaxResponse2").innerHTML = xhr.responseText;
-
-                  // Aquí puedes agregar lógica adicional si es necesario
               } else {
                   document.getElementById("ajaxResponse2").innerText = "Error en la solicitud: " + xhr.status;
               }

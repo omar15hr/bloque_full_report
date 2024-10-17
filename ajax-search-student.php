@@ -12,9 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Consulta SQL para obtener el nombre, apellido, username y cursos en los que está matriculado
+    // Consulta SQL para obtener el nombre, apellido, username, email y cursos en los que está matriculado
     $sql = "
-        SELECT u.id, u.firstname, u.lastname, u.username, c.id AS courseid, c.fullname AS course, u.institution
+        SELECT u.id, u.firstname, u.lastname, u.username, u.email, c.id AS courseid, c.fullname AS course, u.institution
         FROM {user} u
         JOIN {user_enrolments} ue ON ue.userid = u.id
         JOIN {enrol} e ON e.id = ue.enrolid
@@ -36,43 +36,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Preparar la respuesta
     $response = ['users' => []];
     foreach ($users as $user) {
-        // Obtener todas las actividades evaluadas (tareas, cuestionarios, etc.) del curso
-        $sql_activities = "
-            SELECT gi.itemname AS activity_name, ROUND(gg.finalgrade, 2) AS activity_grade
+        // Obtener el total de quiz del curso
+        $sql_total_quiz = "
+            SELECT COUNT(gi.id) AS total_quiz
+            FROM {grade_items} gi
+            WHERE gi.courseid = :courseid AND gi.itemmodule = 'quiz'
+        ";
+        $total_quiz = $DB->get_field_sql($sql_total_quiz, ['courseid' => $user->courseid]);
+
+        // Obtener el total de quiz con nota > 0 para el usuario
+        $sql_quiz_user = "
+            SELECT COUNT(gg.id) AS total_grades
             FROM {grade_items} gi
             JOIN {grade_grades} gg ON gi.id = gg.itemid
-            WHERE gi.courseid = :courseid AND gi.itemtype != 'course' AND gg.userid = :userid
+            WHERE gi.courseid = :courseid AND gi.itemmodule = 'quiz' AND gg.userid = :userid AND gg.finalgrade > 0
         ";
-        $params_activities = [
-            'courseid' => $user->courseid,
-            'userid' => $user->id
-        ];
+        $total_grades = $DB->get_field_sql($sql_quiz_user, ['courseid' => $user->courseid, 'userid' => $user->id]);
 
-        // Obtener las actividades y calificaciones
-        $activities = $DB->get_records_sql($sql_activities, $params_activities);
-
-        // Formatear las actividades en un arreglo
-        $activity_list = [];
-        foreach ($activities as $activity) {
-            $activity_list[] = [
-                'name' => $activity->activity_name,
-                'grade' => $activity->activity_grade
-            ];
-        }
-
-        // Calcular el estado basado en las notas
-        $total_grades = array_column($activity_list, 'grade'); // Obtener solo las notas
-        $all_zero = !array_filter($total_grades, fn($grade) => $grade > 0); // Verificar si todas son cero
-        $has_passed = array_filter($total_grades, fn($grade) => $grade > 0); // Verificar si hay alguna nota diferente de cero
-        $final_grade = $has_passed ? max($has_passed) : 0; // Obtener la nota máxima
+        // Calcular la diferencia entre el total de quiz y los completados
+        $difference = $total_quiz - $total_grades;
 
         // Determinar el estado
-        if ($all_zero) {
-            $status = 'sin acceso';
-        } elseif ($final_grade === 0 && !empty($has_passed)) {
-            $status = 'desiste';
+        if ($difference === 0) {
+            $status = 'Activo';
+        } elseif ($difference === $total_quiz) {
+            $status = 'Sin acceso';
+        } elseif ($difference > 0 && $difference < $total_quiz) {
+            $status = 'Desiste';
         } else {
-            $status = 'activo'; // Puedes definir otro estado si lo necesitas
+            $status = 'Sin acceso';
         }
 
         // Preparar la respuesta por usuario
@@ -81,9 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'name' => $user->firstname,
             'surname' => $user->lastname,
             'username' => $user->username,
+            'email' => $user->email, // Añadir el email a la respuesta
             'course' => $user->course,
             'institution' => $user->institution,
-            'activities' => $activity_list,
             'status' => $status // Añadir el estado a la respuesta
         ];
     }
@@ -93,3 +85,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo json_encode($response);
     exit;
 }
+?>

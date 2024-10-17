@@ -17,34 +17,20 @@ document.getElementById("searchButton").addEventListener("click", function() {
             if (response.error) {
                 document.getElementById("searchResults").innerText = response.error;
             } else {
-                var resultHtml = "<ul>";
+                var resultHtml = "<ul class='search-results'>";
                 response.users.forEach(function(user) {
-                    resultHtml += "<li>Nombre: " + user.name + " " + user.surname + "<br>";
-                    resultHtml += "Username: " + user.username + "<br>";
-                    resultHtml += "Curso: " + user.course + "<br>";
-                    resultHtml += "Institución: " + user.institution + "<br>";
-                    
-                    // Mostrar el estado del alumno
-                    resultHtml += "Estado: " + user.status + "<br>"; // Agregar esta línea para mostrar el estado
-            
-                    // Mostrar las actividades y calificaciones
-                    if (user.activities.length > 0) {
-                        resultHtml += "<ul>";
-                        user.activities.forEach(function(activity) {
-                            resultHtml += "<li>Actividad: " + activity.name + " - Nota: " + (activity.grade !== null ? activity.grade : "Sin calificación") + "</li>";
-                        });
-                        resultHtml += "</ul>";
-                    } else {
-                        resultHtml += "No hay actividades evaluadas.<br>";
-                    }
-            
+                    resultHtml += "<li class='result-item'>";
+                    resultHtml += "<span class='result-name'>Nombre: " + user.name + " " + user.surname + "</span><br>";
+                    resultHtml += "<span class='result-username'>Username: " + user.username + "</span><br>";
+                    resultHtml += "<span class='result-email'>Email: " + user.email + "</span><br>"; // Añadir el email
+                    resultHtml += "<span class='result-course'>Curso: " + user.course + "</span><br>";
+                    resultHtml += "<span class='result-institution'>Institución: " + user.institution + "</span><br>";
+                    resultHtml += "<span class='result-status'>Estado: " + user.status + "</span><br>"; // Agregar esta línea para mostrar el estado
                     resultHtml += "</li><br>";
                 });
                 resultHtml += "</ul>";
                 document.getElementById("searchResults").innerHTML = resultHtml;
             }
-            
-            
             
         }
     };
