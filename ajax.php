@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($courseId)) {
         // Consulta SQL para obtener la información de los usuarios inscritos en el curso
         $sql = "SELECT u.id, u.username, u.firstname, u.lastname, c.fullname AS course_name, u.institution,
-                    COALESCE(ROUND(gg.finalgrade, 2), 'Sin calificación') AS total_grade
+                    COALESCE(ROUND(gg.finalgrade, 2), 0) AS total_grade
                 FROM {user} u
                 JOIN {user_enrolments} ue ON ue.userid = u.id
                 JOIN {enrol} e ON e.id = ue.enrolid
@@ -20,9 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 LEFT JOIN {grade_grades} gg ON gg.userid = u.id
                 LEFT JOIN {grade_items} gi ON gi.id = gg.itemid
                 WHERE e.courseid = :courseid
-                GROUP BY u.id, u.username, u.firstname, u.lastname, c.fullname, u.institution;
-        ";
-
+                GROUP BY u.id, u.username, u.firstname, u.lastname, c.fullname, u.institution;";
 
         $params = ['courseid' => $courseId];
 
@@ -36,6 +34,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
 
         foreach ($users as $user) {
+            // Lógica para determinar el estado del usuario
+            $status = 'activo'; // Estado por defecto
+
+            if ($user->total_grade == 0) {
+                $status = 'sin acceso';
+            } elseif ($user->total_grade === 0) { // Ajustar según tus condiciones
+                $status = 'desiste';
+            }
+
             $response['users'][] = [
                 'id' => $user->id,
                 'username' => $user->username,
@@ -44,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'course_name' => $user->course_name,
                 'institution' => $user->institution,
                 'total_grade' => $user->total_grade,
+                'status' => $status // Agregar estado a la respuesta
             ];
         }
 

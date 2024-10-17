@@ -23,11 +23,28 @@ document.getElementById("searchButton").addEventListener("click", function() {
                     resultHtml += "Username: " + user.username + "<br>";
                     resultHtml += "Curso: " + user.course + "<br>";
                     resultHtml += "Institución: " + user.institution + "<br>";
-                    resultHtml += "Resultado del Curso: " + (user.total_grade !== undefined ? user.total_grade : "Sin calificación") + "</li>" + "<br>";
+                    
+                    // Mostrar el estado del alumno
+                    resultHtml += "Estado: " + user.status + "<br>"; // Agregar esta línea para mostrar el estado
+            
+                    // Mostrar las actividades y calificaciones
+                    if (user.activities.length > 0) {
+                        resultHtml += "<ul>";
+                        user.activities.forEach(function(activity) {
+                            resultHtml += "<li>Actividad: " + activity.name + " - Nota: " + (activity.grade !== null ? activity.grade : "Sin calificación") + "</li>";
+                        });
+                        resultHtml += "</ul>";
+                    } else {
+                        resultHtml += "No hay actividades evaluadas.<br>";
+                    }
+            
+                    resultHtml += "</li><br>";
                 });
                 resultHtml += "</ul>";
                 document.getElementById("searchResults").innerHTML = resultHtml;
             }
+            
+            
             
         }
     };

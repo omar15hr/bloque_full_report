@@ -20,7 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Consulta SQL para obtener los cursos y la cantidad de alumnos matriculados
     $sql = "
         SELECT c.id, c.fullname, c.startdate,
-            (SELECT COUNT(*) FROM {user_enrolments} ue JOIN {enrol} e ON e.id = ue.enrolid WHERE e.courseid = c.id) AS enrolled_count
+            (SELECT COUNT(*) FROM {user_enrolments} ue JOIN {enrol} e ON e.id = ue.enrolid WHERE e.courseid = c.id) AS enrolled_count,
+            (SELECT COUNT(*) FROM {user_enrolments} ue JOIN {enrol} e ON e.id = ue.enrolid 
+             JOIN {user} u ON u.id = ue.userid WHERE e.courseid = c.id AND ue.status = 0) AS not_access_count,
+            (SELECT COUNT(*) FROM {user_enrolments} ue JOIN {enrol} e ON e.id = ue.enrolid 
+             JOIN {user} u ON u.id = ue.userid WHERE e.courseid = c.id AND ue.status = 1) AS active_count,
+            (SELECT COUNT(*) FROM {user_enrolments} ue JOIN {enrol} e ON e.id = ue.enrolid 
+             JOIN {user} u ON u.id = ue.userid WHERE e.courseid = c.id AND ue.status = 2) AS desist_count
         FROM {course} c
         WHERE c.startdate BETWEEN :startdate AND :enddate";
     
@@ -36,7 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = "<h3>Cursos obtenidos correctamente:</h3><ul>"; // Cambiar para imprimir directamente
 
     foreach ($courses as $course) {
-        $response .= "<li>ID: {$course->id}, Nombre: {$course->fullname}, Fecha de inicio: " . date('Y-m-d', $course->startdate) . ", Alumnos matriculados: {$course->enrolled_count}</li>";
+        $response .= "<li>ID: {$course->id}, Nombre: {$course->fullname}, Fecha de inicio: " . date('Y-m-d', $course->startdate) . 
+                     ", Alumnos matriculados: {$course->enrolled_count}, Sin acceso: {$course->not_access_count}, " . 
+                     "Activos: {$course->active_count}, Desisten: {$course->desist_count}</li>";
     }
     $response .= "</ul>";
 
