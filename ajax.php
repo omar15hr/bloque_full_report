@@ -41,8 +41,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $difference = $user->total_quiz_course - $user->total_quiz_user;
 
             // Lógica para determinar el estado del usuario
-            if ($difference == 0) {
-                $status = 'Activo';
+            if ($difference === 0) {
+                // Si el alumno es activo, verificar si tiene un certificado
+                $cert_sql = "
+                    SELECT COUNT(*) 
+                    FROM {customcert_issues} ci
+                    JOIN {customcert} c ON ci.customcertid = c.id
+                    WHERE ci.userid = :userid AND c.course = :courseid
+                ";
+                try {
+                    $has_certificate = $DB->get_field_sql($cert_sql, ['userid' => $user->id, 'courseid' => $courseId]);
+                    $status = ($has_certificate > 0) ? 'Aprobado' : 'Reprobado';
+                } catch (Exception $e) {
+                    error_log("Error en la consulta de certificado: " . $e->getMessage());
+                    $status = 'Desconocido'; // Valor por defecto en caso de error
+                }
             } elseif ($difference == $user->total_quiz_course) {
                 $status = 'Sin acceso';
             } elseif ($difference > 0 && $difference < $user->total_quiz_course) {
