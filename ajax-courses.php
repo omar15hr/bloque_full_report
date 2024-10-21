@@ -39,8 +39,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = "<h3>Cursos obtenidos correctamente:</h3><ul>";
 
     foreach ($courses as $course) {
+        // Agregar detalles del curso
         $response .= "<li>ID: {$course->id}, Nombre: {$course->fullname}, Fecha de inicio: " . date('Y-m-d', $course->startdate) . 
-                     ", Alumnos matriculados: {$course->enrolled_count}</li>";
+                     ", Alumnos matriculados: {$course->enrolled_count}";
+
+        // Obtener la lista de alumnos matriculados en el curso
+        $studentSql = "
+            SELECT u.id, u.firstname, u.lastname
+            FROM {user} u
+            JOIN {user_enrolments} ue ON ue.userid = u.id
+            JOIN {enrol} e ON e.id = ue.enrolid
+            WHERE e.courseid = :courseid";
+
+        $studentParams = ['courseid' => $course->id];
+        $students = $DB->get_records_sql($studentSql, $studentParams);
+
+        // Agregar lista de alumnos debajo del curso
+        if ($students) {
+            $response .= "<ul>";
+            foreach ($students as $student) {
+                $response .= "<li>{$student->firstname} {$student->lastname}</li>";
+            }
+            $response .= "</ul>";
+        } else {
+            $response .= "<ul><li>No hay alumnos matriculados.</li></ul>";
+        }
+
+        $response .= "</li>"; // Cerrar el li del curso
     }
     $response .= "</ul>";
 
