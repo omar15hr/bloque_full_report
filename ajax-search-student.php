@@ -58,8 +58,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Determinar el estado
         if ($difference === 0) {
-            $status = 'Activo';
-        } elseif ($difference === $total_quiz) {
+            // Si el alumno es activo, verificar si tiene un certificado
+            $cert_sql = "
+                SELECT 
+                    CASE 
+                        WHEN ci.id IS NOT NULL THEN 'Aprobado'  -- Tiene un certificado
+                        ELSE 'Reprobado'                        -- No tiene un certificado
+                    END AS status
+                FROM 
+                    {user} u
+                JOIN 
+                    {course} c ON c.fullname = 'Curso de Introducción a la Programación'  -- Filtrar por nombre del curso
+                JOIN 
+                    {enrol} e ON e.courseid = c.id  -- Enrolamiento en el curso
+                JOIN 
+                    {user_enrolments} ue ON ue.enrolid = e.id AND ue.userid = u.id  -- Usuarios inscritos en el curso
+                LEFT JOIN 
+                    {customcert_issues} ci ON u.id = ci.userid
+                LEFT JOIN 
+                    {customcert} cc ON ci.customcertid = cc.id AND cc.course = c.id  -- Asegurarse de que el certificado está vinculado al curso
+                WHERE 
+                    u.id = :userid AND u.deleted = 0  -- Asegúrate de incluir solo usuarios activos
+            ";
+        
+            // Verificamos que la consulta SQL no falle
+            try {
+                // Ejecutar la consulta y obtener el estado
+                $status = $DB->get_field_sql($cert_sql, ['userid' => $user->id]);
+            } catch (Exception $e) {
+                error_log("Error en la consulta de certificado: " . $e->getMessage());
+                $status = 'Desconocido'; // Valor por defecto en caso de error
+            }
+        }
+         elseif ($difference === $total_quiz) {
             $status = 'Sin acceso';
         } elseif ($difference > 0 && $difference < $total_quiz) {
             $status = 'Desiste';
